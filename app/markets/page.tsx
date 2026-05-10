@@ -2,12 +2,28 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { store } from "@/lib/store";
 import { MarketsList } from "@/components/MarketsList";
-import { fetchPricesByCountry, applyPricesByCountry } from "@/lib/polymarket";
+import {
+  fetchPricesByCountry,
+  applyPricesByCountry,
+  bootstrapCountriesFromPolymarket,
+} from "@/lib/polymarket";
 import { PRICE_POLL_INTERVAL_MS } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 
+async function ensureCountriesSeeded() {
+  const existing = await store.listCountries();
+  if (existing.length > 0) return;
+  try {
+    const fresh = await bootstrapCountriesFromPolymarket();
+    if (fresh.length > 0) await store.replaceCountries(fresh);
+  } catch (e) {
+    console.error("Country bootstrap failed:", e);
+  }
+}
+
 async function refreshPricesIfStale() {
+  await ensureCountriesSeeded();
   const last = await store.getPricesLastFetch();
   if (Date.now() - last < PRICE_POLL_INTERVAL_MS) return;
   try {

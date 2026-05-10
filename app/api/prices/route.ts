@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
-import { fetchPricesByCountry, applyPricesByCountry } from "@/lib/polymarket";
+import {
+  fetchPricesByCountry,
+  applyPricesByCountry,
+  bootstrapCountriesFromPolymarket,
+} from "@/lib/polymarket";
 import { PRICE_POLL_INTERVAL_MS } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 
 let inFlight: Promise<void> | null = null;
+
+async function ensureCountries(): Promise<void> {
+  const existing = await store.listCountries();
+  if (existing.length > 0) return;
+  const fresh = await bootstrapCountriesFromPolymarket();
+  if (fresh.length > 0) {
+    await store.replaceCountries(fresh);
+  }
+}
 
 async function maybeRefresh(): Promise<{ refreshed: boolean; stale: boolean; error?: string }> {
   const last = await store.getPricesLastFetch();
@@ -22,6 +35,7 @@ async function maybeRefresh(): Promise<{ refreshed: boolean; stale: boolean; err
   let error: string | undefined;
   inFlight = (async () => {
     try {
+      await ensureCountries();
       const byCountry = await fetchPricesByCountry();
       const countries = await store.listCountries();
       const fallback = await store.getCurrentPrices();

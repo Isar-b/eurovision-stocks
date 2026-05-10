@@ -140,3 +140,32 @@ export function applyPricesByCountry(
   }
   return { prices, closedCountries, missing };
 }
+
+/**
+ * Build a `Country[]` directly from a Polymarket event by joining `groupItemTitle`
+ * with the local `COUNTRY_META` flag/code map. Used to bootstrap the country list
+ * on first request when KV is empty (no manual seed step required).
+ */
+export async function bootstrapCountriesFromPolymarket(): Promise<
+  import("./types").Country[]
+> {
+  const { COUNTRY_META } = await import("./countries");
+  const ev = await fetchEvent();
+  const subs = parseEvent(ev).filter((s) => s.active);
+  const out: import("./types").Country[] = [];
+  for (const s of subs) {
+    const meta = COUNTRY_META[s.countryName];
+    if (!meta) continue;
+    out.push({
+      code: meta.code,
+      name: s.countryName,
+      flag: meta.flag,
+      polymarketMarketId: s.marketId,
+      polymarketSlug: s.slug,
+      yesTokenId: s.yesTokenId,
+      openPrice: probabilityToPrice(s.yesPrice),
+    });
+  }
+  out.sort((a, b) => a.name.localeCompare(b.name));
+  return out;
+}
