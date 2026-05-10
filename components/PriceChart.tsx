@@ -81,9 +81,20 @@ export function PriceChart({
   const data = useMemo(() => {
     const now = Date.now();
     const cutoff = now - RANGES[range];
-    return series
+    const filtered = series
       .filter((s) => s.ts >= cutoff)
       .map((s) => ({ ts: s.ts, price: s.price }));
+    // If we only have a single tick, mirror it to "now" so the chart paints a
+    // flat line rather than a single dot — more honest about the underlying
+    // unchanged price than a "loading…" placeholder.
+    if (filtered.length === 1) {
+      const only = filtered[0];
+      const now2 = Date.now();
+      if (now2 - only.ts > 1000) {
+        filtered.push({ ts: now2, price: only.price });
+      }
+    }
+    return filtered;
   }, [series, range]);
 
   const currentPrice = data.length ? data[data.length - 1].price : initialPrice;
@@ -95,7 +106,7 @@ export function PriceChart({
     return (
       <div>
         <div className="evs-card h-56 grid place-items-center text-evs-muted text-sm">
-          Live chart starts after the next price tick…
+          Collecting first price tick…
         </div>
         <RangeChips range={range} setRange={setRange} />
       </div>

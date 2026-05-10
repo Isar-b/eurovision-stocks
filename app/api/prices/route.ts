@@ -15,9 +15,18 @@ async function ensureCountries(): Promise<void> {
   const existing = await store.listCountries();
   if (existing.length > 0) return;
   const fresh = await bootstrapCountriesFromPolymarket();
-  if (fresh.length > 0) {
-    await store.replaceCountries(fresh);
-  }
+  if (fresh.length === 0) return;
+  await store.replaceCountries(fresh);
+  // Seed an opening-price history tick per country so charts have a left-anchor
+  // even before the first refresh interval elapses.
+  const ts = Date.now();
+  await Promise.all(
+    fresh.map((c) =>
+      store.appendPriceSnapshot(c.code, { ts, price: c.openPrice }),
+    ),
+  );
+  const initialPrices = Object.fromEntries(fresh.map((c) => [c.code, c.openPrice]));
+  await store.setCurrentPrices(initialPrices);
 }
 
 async function maybeRefresh(): Promise<{ refreshed: boolean; stale: boolean; error?: string }> {

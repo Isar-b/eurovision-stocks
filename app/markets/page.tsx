@@ -16,7 +16,18 @@ async function ensureCountriesSeeded() {
   if (existing.length > 0) return;
   try {
     const fresh = await bootstrapCountriesFromPolymarket();
-    if (fresh.length > 0) await store.replaceCountries(fresh);
+    if (fresh.length === 0) return;
+    await store.replaceCountries(fresh);
+    const ts = Date.now();
+    await Promise.all(
+      fresh.map((c) =>
+        store.appendPriceSnapshot(c.code, { ts, price: c.openPrice }),
+      ),
+    );
+    const initialPrices = Object.fromEntries(
+      fresh.map((c) => [c.code, c.openPrice]),
+    );
+    await store.setCurrentPrices(initialPrices);
   } catch (e) {
     console.error("Country bootstrap failed:", e);
   }
