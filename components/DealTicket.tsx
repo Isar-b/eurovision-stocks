@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Country, Holding } from "@/lib/types";
 
+type Mode = "units" | "value";
+
 export function DealTicket({
   country,
   side,
@@ -18,23 +20,72 @@ export function DealTicket({
   holding: Holding | null;
 }) {
   const router = useRouter();
-  const [units, setUnits] = useState(side === "buy" ? 1 : Math.min(holding?.units ?? 1, 1));
+  const [mode, setMode] = useState<Mode>(side === "buy" ? "value" : "units");
+  // Keep the raw input string so partial typing like "1." or "" is preserved.
+  const [raw, setRaw] = useState<string>(
+    side === "buy"
+      ? "" // start empty so the user just types
+      : (holding?.units ?? 1).toString(),
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const total = useMemo(
-    () => Math.round(units * currentPrice * 100) / 100,
+  // Parse the input and derive units + value depending on mode.
+  const parsed = parseFloat(raw);
+  const validNumber = Number.isFinite(parsed) && parsed > 0;
+  const units = useMemo(() => {
+    if (!validNumber) return 0;
+    if (mode === "units") return roundTo(parsed, 2);
+    if (currentPrice <= 0) return 0;
+    return roundTo(parsed / currentPrice, 2);
+  }, [parsed, mode, currentPrice, validNumber]);
+  const value = useMemo(
+    () => roundTo(units * currentPrice, 2),
     [units, currentPrice],
   );
 
-  const tooMuchCash = side === "buy" && total > cash;
+  const tooMuchCash = side === "buy" && value > cash + 1e-9;
   const tooManyUnits =
     side === "sell" && (!holding || units > holding.units + 1e-9);
-  const invalidQty = !Number.isFinite(units) || units <= 0;
+  const invalidQty = !validNumber || units <= 0;
   const disabled = submitting || tooMuchCash || tooManyUnits || invalidQty;
 
-  function adjust(delta: number) {
-    setUnits((u) => Math.max(0.5, Math.round((u + delta) * 100) / 100));
+  function adjust(deltaUnits: number) {
+    const nextUnits = Math.max(0.01, roundTo(units + deltaUnits, 2));
+    if (mode === "units") {
+      setRaw(nextUnits.toString());
+    } else {
+      setRaw(roundTo(nextUnits * currentPrice, 2).toString());
+    }
+  }
+
+  function setMaxBuy() {
+    const maxValue = Math.floor(cash * 100) / 100;
+    if (mode === "units") {
+      setRaw(roundTo(maxValue / currentPrice, 2).toString());
+    } else {
+      setRaw(maxValue.toString());
+    }
+  }
+
+  function setMaxSell() {
+    if (!holding) return;
+    if (mode === "units") {
+      setRaw(holding.units.toString());
+    } else {
+      setRaw(roundTo(holding.units * currentPrice, 2).toString());
+    }
+  }
+
+  function changeMode(next: Mode) {
+    if (next === mode) return;
+    // Convert the current input to the new mode so the displayed amount stays equivalent.
+    if (next === "value") {
+      setRaw(value > 0 ? value.toString() : "");
+    } else {
+      setRaw(units > 0 ? units.toString() : "");
+    }
+    setMode(next);
   }
 
   async function submit() {
@@ -60,8 +111,10 @@ export function DealTicket({
     }
   }
 
-  const remaining =
-    side === "buy" ? cash - total : cash + total;
+  const cashAfter = side === "buy" ? cash - value : cash + value;
+  const inputPrefix = mode === "value" ? "£" : "";
+  const inputSuffix = mode === "units" ? "units" : "";
+  const placeholder = mode === "value" ? "0.00" : "0";
 
   return (
     <div className="space-y-4">
@@ -79,24 +132,68 @@ export function DealTicket({
         />
       </div>
 
+      {/* Mode toggle */}
+      <div className="evs-card p-1 flex" role="tablist" aria-label="Order mode">
+        <ModePill
+          label={`Value (£)`}
+          active={mode === "value"}
+          onClick={() => changeMode("value")}
+        />
+        <ModePill
+          label="Units"
+          active={mode === "units"}
+          onClick={() => changeMode("units")}
+        />
+      </div>
+
+      {/* Amount input */}
       <div>
-        <div className="evs-section-label mb-1.5">
-          Units to {side === "buy" ? "buy" : "sell"}
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="evs-section-label">
+            {mode === "value"
+              ? `${side === "buy" ? "Amount to spend" : "Amount to sell"}`
+              : `Units to ${side === "buy" ? "buy" : "sell"}`}
+          </div>
+          <button
+            type="button"
+            onClick={side === "buy" ? setMaxBuy : setMaxSell}
+            className="text-[11px] uppercase tracking-[1px] font-display font-bold text-evs-cyan hover:text-evs-soft"
+          >
+            Max
+          </button>
         </div>
-        <div className="evs-card flex items-center justify-between p-3">
-          <input
-            type="number"
-            min={0.5}
-            step={0.5}
-            value={units}
-            onChange={(e) => setUnits(parseFloat(e.target.value) || 0)}
-            className="bg-transparent text-xl evs-price outline-none w-32"
-          />
-          <div className="flex gap-2">
+        <div className="evs-card flex items-center justify-between gap-2 p-3">
+          <div className="flex items-baseline gap-1 flex-1 min-w-0">
+            {inputPrefix && (
+              <span className="evs-price text-xl text-evs-muted">{inputPrefix}</span>
+            )}
+            <input
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*[.]?[0-9]*"
+              value={raw}
+              onChange={(e) => {
+                // Allow only digits and a single dot.
+                const cleaned = e.target.value.replace(/[^0-9.]/g, "");
+                const dots = cleaned.split(".").length - 1;
+                if (dots > 1) return;
+                setRaw(cleaned);
+              }}
+              placeholder={placeholder}
+              autoFocus
+              className="bg-transparent text-xl evs-price outline-none flex-1 min-w-0 w-full"
+              aria-label={mode === "value" ? "Amount in pounds" : "Number of units"}
+            />
+            {inputSuffix && (
+              <span className="evs-price text-xs text-evs-muted">{inputSuffix}</span>
+            )}
+          </div>
+          <div className="flex gap-1.5 flex-shrink-0">
             <button
               onClick={() => adjust(-0.5)}
               className="w-9 h-9 rounded-md bg-white/8 text-evs-soft text-lg font-bold"
               type="button"
+              aria-label="Decrease by 0.5 units"
             >
               −
             </button>
@@ -104,23 +201,30 @@ export function DealTicket({
               onClick={() => adjust(0.5)}
               className="w-9 h-9 rounded-md bg-evs-magenta/40 text-white text-lg font-bold"
               type="button"
+              aria-label="Increase by 0.5 units"
             >
               +
             </button>
           </div>
         </div>
+        {/* Live conversion */}
+        {validNumber && (
+          <div className="mt-1.5 text-xs text-evs-muted evs-tabular">
+            {mode === "value"
+              ? `≈ ${units.toFixed(2)} units at £${currentPrice.toFixed(2)} each`
+              : `≈ £${value.toFixed(2)} at £${currentPrice.toFixed(2)} per unit`}
+          </div>
+        )}
       </div>
 
       <div className="evs-card divide-y divide-white/5">
         <Row label="Units" value={units.toFixed(2)} />
         <Row label="Price per unit" value={`£${currentPrice.toFixed(2)}`} />
-        <Row label="Total" value={`£${total.toFixed(2)}`} bold />
+        <Row label="Total" value={`£${value.toFixed(2)}`} bold />
         <Row
-          label={side === "buy" ? "Cash after" : "Cash after"}
-          value={`£${remaining.toFixed(2)}`}
-          color={
-            side === "buy" && tooMuchCash ? "danger" : "success"
-          }
+          label="Cash after"
+          value={`£${cashAfter.toFixed(2)}`}
+          color={side === "buy" && tooMuchCash ? "danger" : "success"}
         />
       </div>
 
@@ -147,7 +251,7 @@ export function DealTicket({
       >
         {submitting
           ? "Submitting…"
-          : `Confirm ${side === "buy" ? "purchase" : "sale"} — £${total.toFixed(2)}`}
+          : `Confirm ${side === "buy" ? "purchase" : "sale"} — £${value.toFixed(2)}`}
       </button>
       <button
         onClick={() => router.back()}
@@ -157,6 +261,32 @@ export function DealTicket({
         Cancel
       </button>
     </div>
+  );
+}
+
+function ModePill({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`flex-1 py-2 px-3 rounded-md text-xs font-display font-bold uppercase tracking-[1.5px] transition-colors ${
+        active
+          ? "bg-evs-magenta text-white"
+          : "text-evs-muted hover:text-evs-soft"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
@@ -194,4 +324,9 @@ function Row({
       </span>
     </div>
   );
+}
+
+function roundTo(n: number, dp: number): number {
+  const f = 10 ** dp;
+  return Math.round(n * f) / f;
 }
