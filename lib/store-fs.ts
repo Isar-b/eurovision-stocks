@@ -25,7 +25,21 @@ const FILES = {
 };
 
 async function ensureDir() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+  } catch {
+    // read-only filesystem (e.g. Vercel /var/task) — fine, we'll just not persist
+  }
+}
+
+// In-memory fallback so read-after-write works within a single serverless
+// invocation, even when the filesystem is read-only.
+const memCache = new Map<string, unknown>();
+
+function isReadOnlyError(e: unknown): boolean {
+  if (!(e instanceof Error)) return false;
+  const code = (e as NodeJS.ErrnoException).code;
+  return code === "EROFS" || code === "EACCES" || code === "EPERM";
 }
 
 async function readJsonOrSeed<T>(
@@ -33,29 +47,48 @@ async function readJsonOrSeed<T>(
   seedFile: string | null,
   fallback: T,
 ): Promise<T> {
+  if (memCache.has(file)) return memCache.get(file) as T;
   await ensureDir();
   try {
     const txt = await fs.readFile(file, "utf-8");
-    return JSON.parse(txt) as T;
+    const parsed = JSON.parse(txt) as T;
+    memCache.set(file, parsed);
+    return parsed;
   } catch {
     if (seedFile) {
       try {
         const txt = await fs.readFile(seedFile, "utf-8");
         const parsed = JSON.parse(txt) as T;
-        await fs.writeFile(file, JSON.stringify(parsed, null, 2), "utf-8");
+        try {
+          await fs.writeFile(file, JSON.stringify(parsed, null, 2), "utf-8");
+        } catch (e) {
+          if (!isReadOnlyError(e)) throw e;
+        }
+        memCache.set(file, parsed);
         return parsed;
       } catch {
         // fall through
       }
     }
-    await fs.writeFile(file, JSON.stringify(fallback, null, 2), "utf-8");
+    try {
+      await fs.writeFile(file, JSON.stringify(fallback, null, 2), "utf-8");
+    } catch (e) {
+      if (!isReadOnlyError(e)) throw e;
+    }
+    memCache.set(file, fallback);
     return fallback;
   }
 }
 
 async function writeJson<T>(file: string, data: T): Promise<void> {
   await ensureDir();
-  await fs.writeFile(file, JSON.stringify(data, null, 2), "utf-8");
+  memCache.set(file, data);
+  try {
+    await fs.writeFile(file, JSON.stringify(data, null, 2), "utf-8");
+  } catch (e) {
+    if (!isReadOnlyError(e)) throw e;
+    // Read-only filesystem — keep the in-memory copy and move on.
+  }
 }
 
 const locks = new Map<string, Promise<void>>();
