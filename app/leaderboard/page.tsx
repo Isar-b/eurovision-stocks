@@ -20,6 +20,8 @@ export default async function LeaderboardPage() {
     .map((p) => {
       const u = userMap.get(p.userId);
       if (!u) return null;
+      // Hide mock-auth (dev) accounts — only Google-linked users have an email.
+      if (!u.email) return null;
       const total = totalValue(p, prices);
       const pnl = unrealisedPnL(p, prices);
       const pnlVsStart = total - STARTING_CASH;
