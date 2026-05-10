@@ -62,12 +62,13 @@ export default async function LeaderboardPage() {
               key={r.userId}
               row={r}
               highlight={r.userId === user.id}
+              selfLink={r.userId === user.id}
             />
           ))}
           {me && !meInTop && (
             <>
               <div className="text-center text-evs-muted text-xs py-1">···</div>
-              <LeaderboardRow row={me} highlight />
+              <LeaderboardRow row={me} highlight selfLink />
             </>
           )}
         </div>

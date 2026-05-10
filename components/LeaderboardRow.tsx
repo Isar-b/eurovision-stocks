@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export type LeaderboardRowData = {
   rank: number;
   userId: string;
@@ -11,14 +13,18 @@ export type LeaderboardRowData = {
 export function LeaderboardRow({
   row,
   highlight = false,
+  selfLink,
 }: {
   row: LeaderboardRowData;
   highlight?: boolean;
+  selfLink?: boolean;
 }) {
   const up = row.pnlVsStart >= 0;
+  const href = selfLink ? "/portfolio" : `/u/${row.userId}`;
   return (
-    <div
-      className={`evs-card flex items-center gap-3 p-3 ${
+    <Link
+      href={href}
+      className={`evs-card flex items-center gap-3 p-3 hover:bg-white/5 transition-colors ${
         highlight ? "border-evs-magenta/60 ring-1 ring-evs-magenta/30" : ""
       }`}
     >
@@ -59,6 +65,6 @@ export function LeaderboardRow({
       <div className="evs-price text-evs-soft">
         £{row.total.toFixed(2)}
       </div>
-    </div>
+    </Link>
   );
 }
