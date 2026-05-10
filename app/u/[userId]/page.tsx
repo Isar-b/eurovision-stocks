@@ -13,11 +13,24 @@ export default async function PublicPortfolioPage({ params }: Params) {
   const me = await getCurrentUser();
   if (!me) redirect("/login");
 
-  const { userId } = await params;
+  const { userId: rawUserId } = await params;
+  // Next.js auto-decodes route params, but be defensive — also try a
+  // double-decode for cases where the segment was double-encoded by an
+  // intermediate proxy.
+  const userId = safeDecode(rawUserId);
   if (userId === me.id) redirect("/portfolio");
 
-  const user = await store.getUser(userId);
-  if (!user) notFound();
+  let user = await store.getUser(userId);
+  // Defensive fallback: try a second decode in case the param arrived still encoded.
+  if (!user && userId !== rawUserId) {
+    user = await store.getUser(rawUserId);
+  }
+  if (!user) {
+    console.warn(
+      `[u/[userId]] user not found. raw=${JSON.stringify(rawUserId)} decoded=${JSON.stringify(userId)} viewer=${me.id}`,
+    );
+    notFound();
+  }
 
   const portfolio = await store.getPortfolio(userId);
   const prices = await store.getCurrentPrices();
@@ -104,4 +117,12 @@ export default async function PublicPortfolioPage({ params }: Params) {
       </div>
     </div>
   );
+}
+
+function safeDecode(s: string): string {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
 }

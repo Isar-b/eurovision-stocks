@@ -20,7 +20,9 @@ export function LeaderboardRow({
   selfLink?: boolean;
 }) {
   const up = row.pnlVsStart >= 0;
-  const href = selfLink ? "/portfolio" : `/u/${row.userId}`;
+  const href = selfLink
+    ? "/portfolio"
+    : `/u/${encodeURIComponent(row.userId)}`;
   return (
     <Link
       href={href}
