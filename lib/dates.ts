@@ -8,7 +8,7 @@ export const CONTEST_OPEN = "2026-05-10T00:00:00Z";
 export const STARTING_CASH = 1000;
 
 export const PRICE_POLL_INTERVAL_MS = Number(
-  process.env.PRICE_POLL_INTERVAL_MS ?? 60_000,
+  process.env.PRICE_POLL_INTERVAL_MS ?? 30_000,
 );
 
 export const HISTORY_CAP = 10_000;
