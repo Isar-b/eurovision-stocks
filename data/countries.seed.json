@@ -1,0 +1,317 @@
+[
+  {
+    "code": "AL",
+    "name": "Albania",
+    "flag": "🇦🇱",
+    "polymarketMarketId": "842004",
+    "polymarketSlug": "will-albania-win-eurovision-2026",
+    "yesTokenId": "9889572735510988395379691984548706900301336495811328550461176878290489183472",
+    "openPrice": 0.15
+  },
+  {
+    "code": "AM",
+    "name": "Armenia",
+    "flag": "🇦🇲",
+    "polymarketMarketId": "842038",
+    "polymarketSlug": "will-armenia-win-eurovision-2026",
+    "yesTokenId": "29729237995730453252301934101123432027571532746546330714078833115429907011706",
+    "openPrice": 0.15
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "flag": "🇦🇺",
+    "polymarketMarketId": "842005",
+    "polymarketSlug": "will-australia-win-eurovision-2026",
+    "yesTokenId": "78303740838350809431780608278874427165281291819688534819299603169404353329185",
+    "openPrice": 4.65
+  },
+  {
+    "code": "AT",
+    "name": "Austria",
+    "flag": "🇦🇹",
+    "polymarketMarketId": "842006",
+    "polymarketSlug": "will-austria-win-eurovision-2026",
+    "yesTokenId": "103415634005536188719544775929333330970248034372896702178158893005574962725101",
+    "openPrice": 0.15
+  },
+  {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "flag": "🇦🇿",
+    "polymarketMarketId": "842007",
+    "polymarketSlug": "will-azerbaijan-win-eurovision-2026",
+    "yesTokenId": "110091611333339645193995929077828998830985206922952876420446350614232586087494",
+    "openPrice": 0.15
+  },
+  {
+    "code": "BE",
+    "name": "Belgium",
+    "flag": "🇧🇪",
+    "polymarketMarketId": "842008",
+    "polymarketSlug": "will-belgium-win-eurovision-2026",
+    "yesTokenId": "1264179917988917484793137913734403125869850614395852937497850013153431830275",
+    "openPrice": 0.15
+  },
+  {
+    "code": "BG",
+    "name": "Bulgaria",
+    "flag": "🇧🇬",
+    "polymarketMarketId": "842009",
+    "polymarketSlug": "will-bulgaria-win-eurovision-2026",
+    "yesTokenId": "27523116703078952225192857973867055358094596184835951341621932820763500836245",
+    "openPrice": 0.55
+  },
+  {
+    "code": "HR",
+    "name": "Croatia",
+    "flag": "🇭🇷",
+    "polymarketMarketId": "842010",
+    "polymarketSlug": "will-croatia-win-eurovision-2026",
+    "yesTokenId": "106758651730919507682370251442747724103873195020765842514096266395116564211531",
+    "openPrice": 0.45
+  },
+  {
+    "code": "CY",
+    "name": "Cyprus",
+    "flag": "🇨🇾",
+    "polymarketMarketId": "842011",
+    "polymarketSlug": "will-cyprus-win-eurovision-2026",
+    "yesTokenId": "47709891118289833432762674913179730610367272569288401760527840117550451669255",
+    "openPrice": 0.85
+  },
+  {
+    "code": "CZ",
+    "name": "Czechia",
+    "flag": "🇨🇿",
+    "polymarketMarketId": "842012",
+    "polymarketSlug": "will-czechia-win-eurovision-2026",
+    "yesTokenId": "46931150136632776349178109863810147979537285049219362296168290038620065135814",
+    "openPrice": 0.85
+  },
+  {
+    "code": "DK",
+    "name": "Denmark",
+    "flag": "🇩🇰",
+    "polymarketMarketId": "842013",
+    "polymarketSlug": "will-denmark-win-eurovision-2026",
+    "yesTokenId": "76966216861676765455847161978020811345081637695305334651438116829300115482952",
+    "openPrice": 12.15
+  },
+  {
+    "code": "EE",
+    "name": "Estonia",
+    "flag": "🇪🇪",
+    "polymarketMarketId": "842014",
+    "polymarketSlug": "will-estonia-win-eurovision-2026",
+    "yesTokenId": "30789889237777559657127194919243089284049186924698609383684181401113388029205",
+    "openPrice": 0.15
+  },
+  {
+    "code": "FI",
+    "name": "Finland",
+    "flag": "🇫🇮",
+    "polymarketMarketId": "842015",
+    "polymarketSlug": "will-finland-win-eurovision-2026",
+    "yesTokenId": "70364657290228044448461397404440906092275799648915793839023224483022545171360",
+    "openPrice": 48.15
+  },
+  {
+    "code": "FR",
+    "name": "France",
+    "flag": "🇫🇷",
+    "polymarketMarketId": "842016",
+    "polymarketSlug": "will-france-win-eurovision-2026",
+    "yesTokenId": "33982069727714559228613640542553959722814245008182061746055194466505822089643",
+    "openPrice": 6.25
+  },
+  {
+    "code": "GE",
+    "name": "Georgia",
+    "flag": "🇬🇪",
+    "polymarketMarketId": "842017",
+    "polymarketSlug": "will-georgia-win-eurovision-2026",
+    "yesTokenId": "57039171877618957364343868222846014933207507601621521785751536699706815828804",
+    "openPrice": 0.05
+  },
+  {
+    "code": "DE",
+    "name": "Germany",
+    "flag": "🇩🇪",
+    "polymarketMarketId": "842018",
+    "polymarketSlug": "will-germany-win-eurovision-2026",
+    "yesTokenId": "75266304909955295886395588045377568209514969391309506016926857837356847360492",
+    "openPrice": 0.35
+  },
+  {
+    "code": "GR",
+    "name": "Greece",
+    "flag": "🇬🇷",
+    "polymarketMarketId": "842019",
+    "polymarketSlug": "will-greece-win-eurovision-2026",
+    "yesTokenId": "82294265279517788069388087838037305194656998172027244775425123449776048199682",
+    "openPrice": 12.35
+  },
+  {
+    "code": "IL",
+    "name": "Israel",
+    "flag": "🇮🇱",
+    "polymarketMarketId": "842020",
+    "polymarketSlug": "will-israel-win-eurovision-2026",
+    "yesTokenId": "95405575911585769697099772472184152032778179663119942855636123308055234853243",
+    "openPrice": 3.85
+  },
+  {
+    "code": "IT",
+    "name": "Italy",
+    "flag": "🇮🇹",
+    "polymarketMarketId": "842021",
+    "polymarketSlug": "will-italy-win-eurovision-2026",
+    "yesTokenId": "103965838880629258162850334568721069152035150178793840229081938589671420946069",
+    "openPrice": 2.05
+  },
+  {
+    "code": "LV",
+    "name": "Latvia",
+    "flag": "🇱🇻",
+    "polymarketMarketId": "842022",
+    "polymarketSlug": "will-latvia-win-eurovision-2026",
+    "yesTokenId": "50166372313368945722321654267951856405187237737784195984593142735087075363377",
+    "openPrice": 0.05
+  },
+  {
+    "code": "LT",
+    "name": "Lithuania",
+    "flag": "🇱🇹",
+    "polymarketMarketId": "842023",
+    "polymarketSlug": "will-lithuania-win-eurovision-2026",
+    "yesTokenId": "15142891584800588880669066303892120684726765594518874118144732848397964519150",
+    "openPrice": 0.15
+  },
+  {
+    "code": "LU",
+    "name": "Luxembourg",
+    "flag": "🇱🇺",
+    "polymarketMarketId": "842024",
+    "polymarketSlug": "will-luxembourg-win-eurovision-2026",
+    "yesTokenId": "105794369185690984684997528102210560966844234871946636968515572069183857743033",
+    "openPrice": 0.35
+  },
+  {
+    "code": "MT",
+    "name": "Malta",
+    "flag": "🇲🇹",
+    "polymarketMarketId": "842025",
+    "polymarketSlug": "will-malta-win-eurovision-2026",
+    "yesTokenId": "110737371251840974265103710933952316860140111886998497411983086067640005826887",
+    "openPrice": 2.45
+  },
+  {
+    "code": "MD",
+    "name": "Moldova",
+    "flag": "🇲🇩",
+    "polymarketMarketId": "842026",
+    "polymarketSlug": "will-moldova-win-eurovision-2026",
+    "yesTokenId": "90679405977970156943195728509973139582436074986479018224924933085652053473882",
+    "openPrice": 0.25
+  },
+  {
+    "code": "ME",
+    "name": "Montenegro",
+    "flag": "🇲🇪",
+    "polymarketMarketId": "842027",
+    "polymarketSlug": "will-montenegro-win-eurovision-2026",
+    "yesTokenId": "40584236519816146826821600367927117118543839703371466872672705287123207911888",
+    "openPrice": 0.15
+  },
+  {
+    "code": "NO",
+    "name": "Norway",
+    "flag": "🇳🇴",
+    "polymarketMarketId": "842028",
+    "polymarketSlug": "will-norway-win-eurovision-2026",
+    "yesTokenId": "55041502915882309027022193776331532309662354833150196419721756718389453035665",
+    "openPrice": 0.45
+  },
+  {
+    "code": "PL",
+    "name": "Poland",
+    "flag": "🇵🇱",
+    "polymarketMarketId": "842029",
+    "polymarketSlug": "will-poland-win-eurovision-2026",
+    "yesTokenId": "9652929333231451094365327582987860832746984766425518052831528812023255883092",
+    "openPrice": 0.15
+  },
+  {
+    "code": "PT",
+    "name": "Portugal",
+    "flag": "🇵🇹",
+    "polymarketMarketId": "842030",
+    "polymarketSlug": "will-portugal-win-eurovision-2026",
+    "yesTokenId": "87347829678955234123011301253910533824434078070439416330959223027222695978684",
+    "openPrice": 0.05
+  },
+  {
+    "code": "RO",
+    "name": "Romania",
+    "flag": "🇷🇴",
+    "polymarketMarketId": "842031",
+    "polymarketSlug": "will-romania-win-eurovision-2026",
+    "yesTokenId": "62773642652981239667825138150364360878883058807515063356324655688311569154350",
+    "openPrice": 3.05
+  },
+  {
+    "code": "SM",
+    "name": "San Marino",
+    "flag": "🇸🇲",
+    "polymarketMarketId": "842032",
+    "polymarketSlug": "will-san-marino-win-eurovision-2026",
+    "yesTokenId": "40561487541491643337655802664585060100388944646578151353464227374060762047355",
+    "openPrice": 0.05
+  },
+  {
+    "code": "RS",
+    "name": "Serbia",
+    "flag": "🇷🇸",
+    "polymarketMarketId": "842033",
+    "polymarketSlug": "will-serbia-win-eurovision-2026",
+    "yesTokenId": "10501187841920123568687012119296369315856862911176934900710311785338266551444",
+    "openPrice": 0.5
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "flag": "🇸🇪",
+    "polymarketMarketId": "842034",
+    "polymarketSlug": "will-sweden-win-eurovision-2026",
+    "yesTokenId": "73724195992086477765138842862409589386605408211483635259048596665225946159897",
+    "openPrice": 1.45
+  },
+  {
+    "code": "CH",
+    "name": "Switzerland",
+    "flag": "🇨🇭",
+    "polymarketMarketId": "842035",
+    "polymarketSlug": "will-switzerland-win-eurovision-2026",
+    "yesTokenId": "83970854497817882267635474256796134722249221757061445559670689491972735053699",
+    "openPrice": 0.15
+  },
+  {
+    "code": "UA",
+    "name": "Ukraine",
+    "flag": "🇺🇦",
+    "polymarketMarketId": "842036",
+    "polymarketSlug": "will-ukraine-win-eurovision-2026",
+    "yesTokenId": "3057561013495433011001220359940176115281776450992504522909034739369519324770",
+    "openPrice": 1.35
+  },
+  {
+    "code": "GB",
+    "name": "United Kingdom",
+    "flag": "🇬🇧",
+    "polymarketMarketId": "842037",
+    "polymarketSlug": "will-united-kingdom-win-eurovision-2026",
+    "yesTokenId": "97473552040198006281295033501889981674479263781808267587127544842007177602551",
+    "openPrice": 0.25
+  }
+]
