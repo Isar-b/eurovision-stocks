@@ -42,3 +42,5 @@ data/prices-current.json
 data/prices-lastFetch.json
 data/prices-history.json
 data/contest-state.json
+
+.vercel

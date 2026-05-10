@@ -20,7 +20,7 @@ export function PortfolioSummary({
     <div className="space-y-3">
       <div className="evs-card p-5 evs-hero-gradient">
         <div className="evs-section-label mb-1">Total value</div>
-        <div className="font-display font-extrabold text-4xl evs-tabular text-evs-soft">
+        <div className="evs-price-lg text-4xl text-evs-soft">
           £{total.toFixed(2)}
         </div>
         <div
@@ -64,9 +64,7 @@ function Card({
   return (
     <div className="evs-card px-3 py-2.5">
       <div className="evs-section-label">{label}</div>
-      <div className={`font-display font-extrabold evs-tabular ${c}`}>
-        {value}
-      </div>
+      <div className={`evs-price ${c}`}>{value}</div>
     </div>
   );
 }

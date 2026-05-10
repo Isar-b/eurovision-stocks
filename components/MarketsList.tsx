@@ -111,31 +111,25 @@ export function MarketsList({
           >
             <span className="text-2xl">{country.flag}</span>
             <div className="flex-1 min-w-0">
-              <div className="font-display font-bold text-evs-soft truncate">
+              <div className="font-medium text-evs-soft truncate">
                 {country.name}
               </div>
-              <div className="text-[11px] text-evs-muted">
-                {country.withdrawn ? "Withdrawn — sell only" : country.code}
-              </div>
+              {country.withdrawn && (
+                <div className="text-[11px] text-evs-danger">
+                  Withdrawn — sell only
+                </div>
+              )}
             </div>
             <div className="text-right">
-              <div
-                className={`font-display font-extrabold evs-tabular text-lg ${
-                  change > 0
-                    ? "text-evs-success"
-                    : change < 0
-                      ? "text-evs-danger"
-                      : "text-evs-soft"
-                }`}
-              >
+              <div className="evs-price text-lg text-evs-soft">
                 £{price.toFixed(2)}
               </div>
               <div
                 className={`text-[11px] evs-tabular ${
                   change > 0
-                    ? "text-evs-success/80"
+                    ? "text-evs-success"
                     : change < 0
-                      ? "text-evs-danger/80"
+                      ? "text-evs-danger"
                       : "text-evs-muted"
                 }`}
               >

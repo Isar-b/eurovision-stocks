@@ -25,15 +25,15 @@ export function HoldingRow({
     >
       <span className="text-2xl">{country.flag}</span>
       <div className="flex-1 min-w-0">
-        <div className="font-display font-bold text-evs-soft">
-          {country.name} · {holding.units} units
+        <div className="font-medium text-evs-soft">
+          {country.name} · <span className="evs-tabular">{holding.units}</span> units
         </div>
         <div className="text-[11px] text-evs-muted evs-tabular">
           Cost £{holding.costBasis.toFixed(2)} · Now £{currentPrice.toFixed(2)}
         </div>
       </div>
       <div className="text-right">
-        <div className="font-display font-extrabold evs-tabular text-evs-soft">
+        <div className="evs-price text-evs-soft">
           £{value.toFixed(2)}
         </div>
         <div

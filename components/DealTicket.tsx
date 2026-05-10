@@ -90,7 +90,7 @@ export function DealTicket({
             step={0.5}
             value={units}
             onChange={(e) => setUnits(parseFloat(e.target.value) || 0)}
-            className="bg-transparent text-xl font-display font-extrabold outline-none w-32 evs-tabular"
+            className="bg-transparent text-xl evs-price outline-none w-32"
           />
           <div className="flex gap-2">
             <button
@@ -164,9 +164,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="evs-card px-3 py-2.5">
       <div className="evs-section-label">{label}</div>
-      <div className="font-display font-extrabold text-lg evs-tabular text-evs-soft">
-        {value}
-      </div>
+      <div className="evs-price text-lg text-evs-soft">{value}</div>
     </div>
   );
 }

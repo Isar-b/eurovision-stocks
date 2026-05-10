@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -24,45 +24,80 @@ const RANGES = {
 
 type RangeKey = keyof typeof RANGES;
 
+const POLL_MS = 15_000;
+
 export function PriceChart({
-  history,
+  countryCode,
+  initialHistory,
+  initialPrice,
   openPrice,
-  currentPrice,
 }: {
-  history: Snapshot[];
+  countryCode: string;
+  initialHistory: Snapshot[];
+  initialPrice: number;
   openPrice: number;
-  currentPrice: number;
 }) {
   const [range, setRange] = useState<RangeKey>("All");
+  const [series, setSeries] = useState<Snapshot[]>(() => {
+    // Seed with the server-provided history plus a synthetic "now" tick for the
+    // current price, so the chart paints immediately even when history is empty.
+    const seeded = [...initialHistory];
+    const lastTs = seeded.length ? seeded[seeded.length - 1].ts : 0;
+    const now = Date.now();
+    if (now - lastTs > 1000) {
+      seeded.push({ ts: now, price: initialPrice });
+    }
+    return seeded;
+  });
+  const lastSeenRef = useRef(initialPrice);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function tick() {
+      try {
+        const res = await fetch("/api/prices", { cache: "no-store" });
+        const data = (await res.json()) as { prices: Record<string, number> };
+        const next = data.prices[countryCode];
+        if (cancelled || typeof next !== "number") return;
+        // Only append if the price has actually moved or it's been > poll-interval since the last tick.
+        setSeries((prev) => {
+          const lastTs = prev.length ? prev[prev.length - 1].ts : 0;
+          const ageMs = Date.now() - lastTs;
+          if (next === lastSeenRef.current && ageMs < POLL_MS * 2) return prev;
+          lastSeenRef.current = next;
+          return [...prev, { ts: Date.now(), price: next }];
+        });
+      } catch {
+        // ignore — try again next tick
+      }
+    }
+    const id = setInterval(tick, POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [countryCode]);
 
   const data = useMemo(() => {
     const now = Date.now();
     const cutoff = now - RANGES[range];
-    const filtered = history.filter((s) => s.ts >= cutoff);
-    // Always include the latest live price as the right-most point.
-    if (filtered.length === 0 || filtered[filtered.length - 1].price !== currentPrice) {
-      filtered.push({ ts: now, price: currentPrice });
-    }
-    return filtered.map((s) => ({
-      ts: s.ts,
-      price: s.price,
-      label: new Date(s.ts).toLocaleString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "2-digit",
-        month: "short",
-      }),
-    }));
-  }, [history, range, currentPrice]);
+    return series
+      .filter((s) => s.ts >= cutoff)
+      .map((s) => ({ ts: s.ts, price: s.price }));
+  }, [series, range]);
 
+  const currentPrice = data.length ? data[data.length - 1].price : initialPrice;
   const isUp = currentPrice >= openPrice;
   const stroke = isUp ? "var(--evs-success)" : "var(--evs-danger)";
   const fillId = isUp ? "evs-chart-up" : "evs-chart-down";
 
   if (data.length < 2) {
     return (
-      <div className="evs-card h-48 grid place-items-center text-evs-muted text-sm">
-        Collecting price history…
+      <div>
+        <div className="evs-card h-56 grid place-items-center text-evs-muted text-sm">
+          Live chart starts after the next price tick…
+        </div>
+        <RangeChips range={range} setRange={setRange} />
       </div>
     );
   }
@@ -125,25 +160,38 @@ export function PriceChart({
               stroke={stroke}
               strokeWidth={2}
               dot={false}
+              isAnimationActive={false}
             />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex gap-2 mt-2">
-        {(Object.keys(RANGES) as RangeKey[]).map((k) => (
-          <button
-            key={k}
-            onClick={() => setRange(k)}
-            className={`px-3 py-1 rounded-md text-[11px] font-display font-bold ${
-              range === k
-                ? "bg-evs-magenta text-white"
-                : "bg-white/5 text-evs-muted hover:text-evs-soft"
-            }`}
-          >
-            {k}
-          </button>
-        ))}
-      </div>
+      <RangeChips range={range} setRange={setRange} />
+    </div>
+  );
+}
+
+function RangeChips({
+  range,
+  setRange,
+}: {
+  range: RangeKey;
+  setRange: (k: RangeKey) => void;
+}) {
+  return (
+    <div className="flex gap-2 mt-2">
+      {(Object.keys(RANGES) as RangeKey[]).map((k) => (
+        <button
+          key={k}
+          onClick={() => setRange(k)}
+          className={`px-3 py-1 rounded-md text-[11px] font-display font-bold ${
+            range === k
+              ? "bg-evs-magenta text-white"
+              : "bg-white/5 text-evs-muted hover:text-evs-soft"
+          }`}
+        >
+          {k}
+        </button>
+      ))}
     </div>
   );
 }

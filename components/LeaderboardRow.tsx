@@ -38,7 +38,7 @@ export function LeaderboardRow({
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="font-display font-bold text-evs-soft truncate">
+        <div className="font-medium text-evs-soft truncate">
           {row.displayName}
           {highlight && (
             <span className="ml-2 text-[10px] uppercase tracking-[1px] text-evs-magenta">
@@ -56,7 +56,7 @@ export function LeaderboardRow({
           {row.pnlPct.toFixed(2)}%
         </div>
       </div>
-      <div className="font-display font-extrabold evs-tabular text-evs-soft">
+      <div className="evs-price text-evs-soft">
         £{row.total.toFixed(2)}
       </div>
     </div>

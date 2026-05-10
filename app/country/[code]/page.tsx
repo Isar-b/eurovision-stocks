@@ -51,7 +51,7 @@ export default async function CountryDetailPage({ params, searchParams }: Params
       </div>
 
       <div>
-        <div className="font-display font-extrabold text-4xl evs-tabular text-evs-soft">
+        <div className="evs-price-lg text-4xl text-evs-soft">
           £{currentPrice.toFixed(2)}
         </div>
         <div
@@ -70,16 +70,17 @@ export default async function CountryDetailPage({ params, searchParams }: Params
       </div>
 
       <PriceChart
-        history={history}
+        countryCode={country.code}
+        initialHistory={history}
+        initialPrice={currentPrice}
         openPrice={country.openPrice}
-        currentPrice={currentPrice}
       />
 
       {holding && (
         <div className="evs-card p-4">
           <div className="evs-section-label mb-1">Your position</div>
-          <div className="font-display font-bold text-lg">
-            {holding.units} units
+          <div className="text-lg text-evs-soft">
+            <span className="evs-price">{holding.units}</span> units
           </div>
           <div className="text-sm text-evs-muted evs-tabular">
             Cost basis £{holding.costBasis.toFixed(2)} · Value £
